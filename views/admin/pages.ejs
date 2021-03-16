@@ -1,0 +1,46 @@
+<%- include('../layouts/admin/header') %>
+    <br><br><br>
+    <div class="container">
+        <h1 class="page-title">Pages Table</h1>
+        <br>
+        <a href="/admin/add-page" class="btn btn-primary">Add New Page</a>
+        <br><br> <br>
+        <%- include('../layouts/alerts/error') %>
+            <div>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+                            <th>Sorting</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (pages) {%>
+                            <% pages.forEach(function(page){%>
+                                <tr>
+                                    <td>
+                                        <%=page.title%>
+                                    </td>
+                                    <td>
+                                        <% if(page.sorting==0){%>
+
+                                            <% }else{%>
+                                                <a href="" class="btn btn-warning">Edit</a>
+                                                <% } %>
+                                    </td>
+                                    <td>
+                                        <a href="" class="btn btn-danger">Delete</a>
+                                    </td>
+                                    <td><%= page.sorting %> </td>
+                                </tr>
+                                <% }) %>
+                                    <% } %>
+                    </tbody>
+
+                </table>
+            </div>
+    </div>
+    <%- include('../layouts/admin/footer') %>

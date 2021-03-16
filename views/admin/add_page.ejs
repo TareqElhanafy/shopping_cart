@@ -1,0 +1,35 @@
+<%- include('../layouts/admin/header') %>
+    <br><br><br>
+    <div class="container">
+        <h1 class="page-title">Add Page</h1>
+        <br>
+        <a href="/admin/pages" class="btn btn-primary">Back to All pages</a>
+        <br><br> <br>
+        <%- include('../layouts/alerts/error') %>
+      <div>
+        <form action="/admin/store-page" method="POST">
+            <div class="form-group">
+                <label for="title">
+                    Title
+                </label>
+                <input type="text" class="form-control" name="title" placeholder="title" value="">
+            </div>
+            <div class="form-group">
+                <label for="title">
+                    Slug
+                </label>
+                <input type="text" class="form-control" name="slug" placeholder="slug" value="">
+            </div>
+            <div class="form-group">
+                <label for="title">
+                    Content
+                </label>
+                <textarea name="content" class="form-control" id="" cols="30" rows="10" placeholder="content"
+                    value=""></textarea>
+            </div>
+            <button type="submit" class="btn btn-success">Submit</button>
+        </form>
+        <br> <br> <br>
+      </div>
+    </div>
+    <%- include('../layouts/admin/footer') %>
