@@ -5,4 +5,28 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"
   integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF" crossorigin="anonymous"></script>
 </body>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script>
+  $(document).on('click', '#delete', function (e) {
+    e.preventDefault()
+    var link = $(this).attr("href")
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = link
+        Swal.fire(
+          'Deleted!',
+          'success'
+        )
+      }
+    })
+  })
+</script>
 </html>

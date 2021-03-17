@@ -1,0 +1,41 @@
+<%- include('../../layouts/admin/header') %>
+    <br><br><br>
+    <div class="container">
+        <h1 class="page-title">Categories Table</h1>
+        <br>
+        <a href="/admin/categories/add-category" class="btn btn-primary">Add New Category</a>
+        <br><br> <br>
+        <%- include('../../layouts/alerts/error') %>
+            <div>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Edit</th>
+                            <th>Delete</th>                        
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (categories) {%>
+                            <% categories.forEach(function(category){%>
+                                <tr>
+                                    <td>
+                                        <%=category.title%>
+                                    </td>
+                                    <td>
+
+                                                <a href="/admin/categories/edit/<%= category.slug %> " class="btn btn-warning">Edit</a>
+                                    </td>
+                                    <td>
+                                        <a href="/admin/categories/delete-page/<%= category.slug %> " id="delete" class="btn btn-danger">Delete</a>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                                    <% } %>
+                    </tbody>
+
+                </table>
+            </div>
+    </div>
+
+    <%- include('../../layouts/admin/footer') %>

@@ -5,7 +5,8 @@ const bodyParser = require('body-parser')
 var session = require('express-session');
 require('dotenv').config()
 require('./db.js');
-const adminRouter = require('./routers/admin')
+const pageRouter = require('./routers/admin/page')
+const categoryRouter = require('./routers/admin/category')
 
 
 
@@ -18,7 +19,7 @@ app.use(bodyParser.json())
 
 
 app.use(session({
-  secret: 'secret',
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false
 }));
@@ -44,7 +45,8 @@ app.use(function (req, res, next) {
 app.use(express.static(path.join(__dirname + 'public')))
 
 //Routers
-app.use('/admin', adminRouter)
+app.use('/admin/pages', pageRouter)
+app.use('/admin/categories', categoryRouter)
 
 
 

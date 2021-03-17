@@ -1,0 +1,42 @@
+<%- include('../../layouts/admin/header') %>
+<script src="https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js"></script>
+    <br><br><br>
+    <div class="container">
+        <h1 class="page-title">Edit Page</h1>
+        <br>
+        <a href="/admin/pages/all" class="btn btn-primary">Back to All pages</a>
+        <br><br> <br>
+        <%- include('../../layouts/alerts/error') %>
+      <div>
+        <form action="/admin/pages/update-page/<%= page.slug %> " method="POST">
+            <div class="form-group">
+                <label for="title">
+                    Title
+                </label>
+                <input type="text" class="form-control" name="title" placeholder="title" value="<%= page.title %> ">
+            </div>
+            <div class="form-group">
+                <label for="title">
+                    Slug
+                </label>
+                <input type="text" class="form-control" name="slug" placeholder="slug" value="<%= page.slug %> ">
+            </div>
+            <div class="form-group">
+                <label for="title">
+                    Content
+                </label>
+                <textarea name="content" id="editor1" class="form-control" id="" cols="30" rows="10" placeholder="content"
+                    value=""><%= page.content %> </textarea>
+                    <input type="hidden" name="id" value="<%= page._id %> ">
+            </div>
+            <button type="submit" class="btn btn-success">Save</button>
+        </form>
+        <br> <br> <br>
+      </div>
+    </div>
+    <script>
+        // Replace the <textarea id="editor1"> with a CKEditor 4
+        // instance, using default configuration.
+        CKEDITOR.replace( 'editor1' );
+    </script>
+    <%- include('../../layouts/admin/footer') %>

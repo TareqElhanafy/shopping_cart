@@ -1,6 +1,6 @@
 <% if(errors){ %>
     <% errors.forEach(function(error){ %>
-        <div style="text-align: center" class="alert alert-<%=alert_type%>">
+        <div style="text-align: center" class="alert alert-danger">
             <button type="button" class="close" data-dismiss="alert">&times;</button>
             <%= error.msg %>
         </div>
