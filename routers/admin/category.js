@@ -9,21 +9,37 @@ const router = new express.Router()
  * get all categories
  */
 router.get('/', async (req, res) => {
-    const categories = await  Category.find({})
-    res.render('admin/category/index', {
-        title: 'Categories',
-        categories: categories
-    })
+    try {
+        const categories = await Category.find({})
+        res.render('admin/category/index', {
+            title: 'Categories',
+            categories: categories
+        })
+    } catch (error) {
+        req.session.flash = {
+            type: 'danger',
+            message: 'something went wrong please try again later'
+        }
+        res.redirect('/admin/')
+    }
 })
 
 /**
  * 
- * Store New Category
+ * get store New Category
  */
 router.get('/add-category', async (req, res) => {
-    res.render('admin/category/new', {
-        title: 'Add Category'
-    })
+    try {
+        res.render('admin/category/new', {
+            title: 'Add Category'
+        })
+    } catch (error) {
+        req.session.flash = {
+            type: 'danger',
+            message: 'something went wrong please try again later'
+        }
+        res.redirect('/admin/categories')
+    }
 })
 
 /**
@@ -74,8 +90,63 @@ router.post('/store-category', [
     }
 })
 
+/**
+ * 
+ * Edit Category
+ */
+router.get('/edit/:slug', async (req, res) => {
+    const category = await Category.findOne({ slug: req.params.slug })
+    if (!category) {
+        req.session.flash = {
+            type: 'danger',
+            message: 'This category not exist'
+        }
+        res.redirect('/admin/categories')
+    } else {
+        res.render('admin/category/edit', {
+            title: 'Edit Category',
+            category: category
+        })
+    }
+})
 
+/**
+ * 
+ * update Category
+ */
+router.post('/update/:slug', [
+    check('title', 'title is required').notEmpty(),
+    check('slug', 'slug is required').notEmpty()
+], async (req, res) => {
+    const category = await Category.findOne({ slug: req.params.slug })
+    if (!category) {
+        req.session.flash = {
+            type: 'danger',
+            message: 'This category not exist'
+        }
+        return res.redirect('/admin/categories')
+    }
+    var result = validationResult(req)
+    if (!result.isEmpty()) {
+        return res.render('admin/category/edit', {
+            title: 'Edit Category',
+            category: category,
+            errors: result.errors
+        })
+    }
+    const title = req.body.title
+    const slug = slugify(req.body.slug, {
+        lower: true
+    })
+    category.title = title
+    category.slug = slug
+    await category.save()
+    req.session.flash = {
+        type: 'success',
+        message: 'Category updated successfully'
+    }
+    res.redirect('/admin/categories')
 
-
+})
 
 module.exports = router

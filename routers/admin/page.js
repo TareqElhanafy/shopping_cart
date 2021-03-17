@@ -8,23 +8,39 @@ const router = new express.Router()
 /**
  * All Pages Route
  */
- router.get('/all', async (req, res) => {
-    const pages = await Page.find({}).sort({ sorting: "asc" })
-    res.render('admin/page/pages', {
-        title: 'Pages',
-        pages: pages
-    })
+router.get('/all', async (req, res) => {
+    try {
+        const pages = await Page.find({}).sort({ sorting: "asc" })
+        res.render('admin/page/pages', {
+            title: 'Pages',
+            pages: pages
+        })
+    } catch (error) {
+        req.session.flash = {
+            type: 'danger',
+            message: 'something went wrong please try again later'
+        }
+        res.redirect('/admin/')
+    }
 })
 
 /**
  * Add page Route
  */
 router.get('/add-page', async (req, res) => {
-    res.render('admin/page/add_page', {
-        title: 'Add Page',
-        slug: 'slug',
-        content: 'content'
-    })
+    try {
+        res.render('admin/page/add_page', {
+            title: 'Add Page',
+            slug: 'slug',
+            content: 'content'
+        })
+    } catch (error) {
+        req.session.flash = {
+            type: 'danger',
+            message: 'something went wrong please try again later'
+        }
+        res.redirect('/admin/pages/all')
+    }
 })
 
 /**
@@ -89,18 +105,26 @@ router.post('/store-page', [
  * Edit Page Route
  */
 router.get("/edit/:slug", async (req, res) => {
-    const page = await Page.findOne({ slug: req.params.slug })
-    if (!page) {
+    try {
+        const page = await Page.findOne({ slug: req.params.slug })
+        if (!page) {
+            req.session.flash = {
+                type: 'danger',
+                message: 'This page not existing'
+            }
+            res.redirect('/admin/pages/all')
+        } else {
+            res.render('admin/page/edit_page', {
+                title: 'Edit Page',
+                page: page
+            })
+        }
+    } catch (error) {
         req.session.flash = {
             type: 'danger',
-            message: 'This page not existing'
+            message: 'something went wrong please try again later'
         }
         res.redirect('/admin/pages/all')
-    } else {
-        res.render('admin/page/edit_page', {
-            title: 'Edit Page',
-            page: page
-        })
     }
 
 })
@@ -109,19 +133,28 @@ router.get("/edit/:slug", async (req, res) => {
  * 
  * Update Page Route
  */
-router.post('/update-page/:slug',[
+router.post('/update-page/:slug', [
     check('title', 'title is required').notEmpty(),
     check('slug', 'slug is required').notEmpty(),
     check('content', 'content is required'),
 ], async (req, res) => {
-    const page = await Page.findOne({ slug: req.params.slug })
-    if (!page) {
-        req.session.flash = {
-            type: 'danger',
-            message: 'This page not existing'
+    try {
+        const page = await Page.findOne({ slug: req.params.slug })
+        if (!page) {
+            req.session.flash = {
+                type: 'danger',
+                message: 'This page not existing'
+            }
+            return res.redirect("/admin/pages/edit/" + page.slug)
         }
-        res.redirect("/admin/pages/edit/" + page.slug)
-    } else {
+
+        var result = validationResult(req)
+        if (!result.isEmpty()) {
+            return res.render('admin/page/edit_page', {
+                title: 'Edit Page',
+                errors: result.errors
+            })
+        }
         page.title = req.body.title
         page.slug = slugify(req.body.slug, {
             lower: true
@@ -133,6 +166,13 @@ router.post('/update-page/:slug',[
             message: 'Page updated successfully'
         }
         res.redirect('/admin/pages/all')
+
+    } catch (error) {
+        req.session.flash = {
+            type: 'danger',
+            message: 'something went wrong please try again later'
+        }
+        res.redirect('/admin/pages/all')
     }
 })
 
@@ -141,18 +181,26 @@ router.post('/update-page/:slug',[
  * Delete Page Route
  */
 router.get('/delete-page/:slug', async (req, res) => {
-    const page = await Page.findOne({ slug: req.params.slug })
-    if (!page) {
+    try {
+        const page = await Page.findOne({ slug: req.params.slug })
+        if (!page) {
+            req.session.flash = {
+                type: 'danger',
+                message: 'This page not existing'
+            }
+            res.redirect("/admin/pages/all")
+        } else {
+            await page.delete()
+            req.session.flash = {
+                type: 'success',
+                message: 'Page deleted successfully'
+            }
+            res.redirect('/admin/pages/all')
+        }
+    } catch (error) {
         req.session.flash = {
             type: 'danger',
-            message: 'This page not existing'
-        }
-        res.redirect("/admin/pages/all")
-    } else {
-        await page.delete()
-        req.session.flash = {
-            type: 'success',
-            message: 'Page deleted successfully'
+            message: 'something went wrong please try again later'
         }
         res.redirect('/admin/pages/all')
     }
