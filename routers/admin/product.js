@@ -84,27 +84,37 @@ router.post('/store-product', [
         const price = req.body.price
         const imageName = req.files.image.name
         const image = req.files.image
-        const product = new Product({
-            name: name,
-            category_id: category_id,
-            slug: slug,
-            price: price,
-            category_id: category_id,
-            image: imageName
-        })
-        await product.save()
-        mkdirp('public/images/products')
-        const path = 'public/images/products/' + imageName
-        image.mv(path, function (error) {
-            console.log(error)
-        })
-        req.session.flash = {
-            type: 'success',
-            message: "Product Added Successfully"
+        const checkProduct = await Product.findOne({ slug: slug })
+        if (!checkProduct) {
+            const product = new Product({
+                name: name,
+                category_id: category_id,
+                slug: slug,
+                price: price,
+                category_id: category_id,
+                image: imageName
+            })
+            await product.save()
+            mkdirp('public/images/products')
+            const path = 'public/images/products/' + imageName
+            image.mv(path, function (error) {
+                console.log(error)
+            })
+            req.session.flash = {
+                type: 'success',
+                message: "Product Added Successfully"
+            }
+            res.redirect('/admin/products')
+        } else {
+            req.session.flash = {
+                type: 'danger',
+                message: 'This product exist already !'
+            }
+            return res.redirect('/admin/products/product-page')
         }
-        res.redirect('/admin/products')
+
+
     } catch (error) {
-        console.log(error);
         req.session.flash = {
             type: 'danger',
             message: 'Something went wrong please try again later'
@@ -113,6 +123,25 @@ router.post('/store-product', [
     }
 })
 
+/**
+ * 
+ * Edit product 
+ */
+router.get('/edit/:slug', async (req, res) => {
+    const product = await Product.findOne({ slug: req.params.slug })
+    if (!product) {
+        return req.session.flash = {
+            type: 'danger',
+            message: 'This product not exists!'
+        }
+    }
+    const categories = await Category.find({})
+    res.render('admin/product/edit', {
+        title: 'Edit Product',
+        product: product,
+        categories: categories
+    })
+})
 
 
 
