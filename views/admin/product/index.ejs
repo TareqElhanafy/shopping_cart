@@ -1,0 +1,54 @@
+<%- include('../../layouts/admin/header') %>
+    <br><br><br>
+    <div class="container">
+        <h1 class="page-title">Products Table</h1>
+        <br>
+        <a href="/admin/products/add-product" class="btn btn-primary">Add New Product</a>
+        <br><br> <br>
+        <%- include('../../layouts/alerts/error') %>
+            <div>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Image</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (products) {%>
+                            <% products.forEach(function(product){%>
+                                <tr>
+                                    <td>
+                                        <%=product.name%>
+                                    </td>
+                                    <td>
+                                        <%=product.category_id.title%>
+                                    </td>
+                                    <td>
+                                        <%=product.price%>
+                                    </td>
+                                    <td>
+                                        <img src="/images/products/<%= product.image %> " style="height: 100px; width: 100px;" alt="">
+                                    </td>
+                                    <td>
+
+                                        <a href="/admin/products/edit/<%= product.slug %> "
+                                            class="btn btn-warning">Edit</a>
+                                    </td>
+                                    <td>
+                                        <a href="/admin/products/delete/<%= product.slug %> " id="delete"
+                                            class="btn btn-danger">Delete</a>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                                    <% } %>
+                    </tbody>
+
+                </table>
+            </div>
+    </div>
+
+    <%- include('../../layouts/admin/footer') %>

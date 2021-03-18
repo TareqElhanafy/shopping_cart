@@ -3,11 +3,12 @@ const ejs = require('ejs')
 const path = require('path')
 const bodyParser = require('body-parser')
 var session = require('express-session');
+const fileUpload = require('express-fileupload')
 require('dotenv').config()
 require('./db.js');
 const pageRouter = require('./routers/admin/page')
 const categoryRouter = require('./routers/admin/category')
-
+const productRouter = require('./routers/admin/product')
 
 
 const app = express()
@@ -16,8 +17,9 @@ const app = express()
 app.use(express.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
-
-
+app.use(fileUpload())
+//loading the static files
+app.use(express.static(path.join(__dirname + '/public')))
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -41,12 +43,12 @@ app.use(function (req, res, next) {
 });
 
 
-//loading the static files
-app.use(express.static(path.join(__dirname + 'public')))
+
 
 //Routers
 app.use('/admin/pages', pageRouter)
 app.use('/admin/categories', categoryRouter)
+app.use('/admin/products', productRouter)
 
 
 
