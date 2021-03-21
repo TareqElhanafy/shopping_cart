@@ -38,7 +38,9 @@ app.locals.errors = null
 //flashing messages middleware
 app.use(function (req, res, next) {
   res.locals.flash = req.session.flash
+  res.locals.form = req.session.form
   delete req.session.flash
+  delete req.session.form
   next();
 });
 
