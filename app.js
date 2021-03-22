@@ -53,8 +53,18 @@ Page.find({}).sort({ sorting: "asc" }).exec(function (error, pages) {
   if (error) {
     console.log(error);
   }
-    app.locals.pages = pages
+  app.locals.pages = pages
 })
+
+//setting the sidebar categories being dynamic
+const Category = require('./models/category')
+Category.find({}).exec(function (error, categories) {
+  if (error) {
+    console.log(error);
+  }
+  app.locals.categories = categories
+})
+
 
 
 

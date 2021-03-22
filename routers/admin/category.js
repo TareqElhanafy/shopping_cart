@@ -69,6 +69,15 @@ router.post('/store-category', [
                 slug: slug,
             })
             await category.save()
+
+            //setting the sidebar categories being dynamic
+            Category.find({}).exec(function (error, categories) {
+                if (error) {
+                    console.log(error);
+                }
+                req.app.locals.categories = categories
+            })
+
             req.session.flash = {
                 type: 'success',
                 message: 'New category added successfully'
@@ -94,9 +103,9 @@ router.post('/store-category', [
  * 
  * Edit Category
  */
-router.get('/edit/:slug', async (req, res) => {
+router.get('/edit/:id', async (req, res) => {
     try {
-        const category = await Category.findOne({ slug: req.params.slug })
+        const category = await Category.findById(req.params.id)
         if (!category) {
             req.session.flash = {
                 type: 'danger',
@@ -122,12 +131,20 @@ router.get('/edit/:slug', async (req, res) => {
  * 
  * update Category
  */
-router.post('/update/:slug', [
+router.post('/update/:id', [
     check('title', 'title is required').notEmpty(),
     check('slug', 'slug is required').notEmpty()
 ], async (req, res) => {
     try {
-        const category = await Category.findOne({ slug: req.params.slug })
+        var result = validationResult(req)
+        if (!result.isEmpty()) {
+            req.session.form = {
+                validations : result.errors
+            }
+            return res.redirect('/admin/categories/edit/' + req.params.id)
+        }
+
+        const category = await Category.findById(req.params.id)
         if (!category) {
             req.session.flash = {
                 type: 'danger',
@@ -135,14 +152,7 @@ router.post('/update/:slug', [
             }
             return res.redirect('/admin/categories')
         }
-        var result = validationResult(req)
-        if (!result.isEmpty()) {
-            return res.render('admin/category/edit', {
-                title: 'Edit Category',
-                category: category,
-                errors: result.errors
-            })
-        }
+
         const title = req.body.title
         const slug = slugify(req.body.slug, {
             lower: true
@@ -150,12 +160,21 @@ router.post('/update/:slug', [
         category.title = title
         category.slug = slug
         await category.save()
+
+        //setting the sidebar categories being dynamic
+        Category.find({}).exec(function (error, categories) {
+            if (error) {
+                console.log(error);
+            }
+            req.app.locals.categories = categories
+        })
         req.session.flash = {
             type: 'success',
             message: 'Category updated successfully'
         }
         res.redirect('/admin/categories')
     } catch (error) {
+        console.log(error);
         req.session.flash = {
             type: 'danger',
             message: 'something went wrong please try again later'
@@ -165,9 +184,9 @@ router.post('/update/:slug', [
 
 })
 
-router.get('/delete/:slug', async (req, res) => {
+router.get('/delete/:id', async (req, res) => {
     try {
-        const category = await Category.findOne({ slug: req.params.slug })
+        const category = await Category.findById(req.params.id)
         if (!category) {
             req.session.flash = {
                 type: 'danger',
@@ -176,6 +195,14 @@ router.get('/delete/:slug', async (req, res) => {
             return res.redirect('/admin/categories')
         }
         await category.delete()
+
+        //setting the sidebar categories being dynamic
+        Category.find({}).exec(function (error, categories) {
+            if (error) {
+                console.log(error);
+            }
+            req.app.locals.categories = categories
+        })
         req.session.flash = {
             type: 'success',
             message: 'Category deleted successfully'

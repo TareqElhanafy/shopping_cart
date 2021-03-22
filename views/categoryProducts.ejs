@@ -4,6 +4,7 @@
       Our Products
     </h1>
     <div class="row">
+        <% if(products){%>
       <% products.forEach(function(product){%>
         <div class="col-xs-12 col-md-4 text-center" style="margin-top: 20px; margin-bottom: 20px;">
           <a href="">
@@ -18,7 +19,7 @@
           <a href="">View Details</a>
         </div>
         <%}) %>
-
+        <% } %> 
     </div>
   </div>
   <%- include("layouts/footer") -%>
