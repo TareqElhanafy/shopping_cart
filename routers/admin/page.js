@@ -50,14 +50,15 @@ router.get('/add-page', async (req, res) => {
 router.post('/store-page', [
     check('title', 'title is required').notEmpty(),
     check('slug', 'slug is required').notEmpty(),
-    check('content', 'content is required'),
+    check('content', 'content is required').notEmpty(),
+    check('sorting', 'sorting is required').notEmpty()
 ], async (req, res) => {
     try {
         var result = validationResult(req)
         if (!result.isEmpty()) {
             return res.render('admin/page/add_page', {
-                'title': 'add page',
-                'errors': result.errors,
+                title: 'add page',
+                errors: result.errors,
             })
         }
 
@@ -66,18 +67,24 @@ router.post('/store-page', [
             lower: true
         })
         const content = req.body.content
-
+        const sorting = req.body.sorting
         const storedSlug = await Page.findOne({ slug: slug })
         if (!storedSlug) {
             const newSlug = new Page({
                 title: title,
                 slug: slug,
                 content: content,
-                sorting: Math.floor(Math.random() * 100) + 1
+                sorting: sorting
             })
 
             await newSlug.save()
-
+            //updating the navbar pages
+            Page.find({}).sort({ sorting: "asc" }).exec(function (error, pages) {
+                if (error) {
+                    console.log(error);
+                }
+                req.app.locals.pages = pages
+            })
             req.session.flash = {
                 type: 'success',
                 message: 'New Page successfully added'
@@ -160,7 +167,15 @@ router.post('/update-page/:slug', [
             lower: true
         })
         page.content = req.body.content
+        page.sorting = req.body.sorting
         await page.save()
+        //updating the navbar pages
+        Page.find({}).sort({ sorting: "asc" }).exec(function (error, pages) {
+            if (error) {
+                console.log(error);
+            }
+            req.app.locals.pages = pages
+        })
         req.session.flash = {
             type: 'success',
             message: 'Page updated successfully'
@@ -190,7 +205,17 @@ router.get('/delete-page/:slug', async (req, res) => {
             }
             res.redirect("/admin/pages/all")
         } else {
+
             await page.delete()
+            
+            //updating the navbar pages
+            Page.find({}).sort({ sorting: "asc" }).exec(function (error, pages) {
+                if (error) {
+                    console.log(error);
+                }
+                req.app.locals.pages = pages
+            })
+
             req.session.flash = {
                 type: 'success',
                 message: 'Page deleted successfully'
@@ -205,15 +230,6 @@ router.get('/delete-page/:slug', async (req, res) => {
         res.redirect('/admin/pages/all')
     }
 })
-
-
-
-
-
-
-
-
-
 
 
 

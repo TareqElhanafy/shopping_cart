@@ -5,8 +5,7 @@ const Product = require('../../models/product')
 const slugify = require('slugify')
 const Category = require('../../models/category')
 const mkdirp = require('mkdirp')
-const { find } = require('../../models/category')
-
+const fs = require('fs')
 /**
  * Get all products
 */
@@ -96,8 +95,9 @@ router.post('/store-product', [
                 image: imageName
             })
             await product.save()
-            mkdirp('public/images/products')
-            const path = 'public/images/products/' + imageName
+            var dir = 'public/images/products/'
+            mkdirp(dir)
+            const path = dir + product._id + imageName
             image.mv(path, function (error) {
                 console.log(error)
             })
@@ -111,11 +111,12 @@ router.post('/store-product', [
                 type: 'danger',
                 message: 'This product exist already !'
             }
-            return res.redirect('/admin/products/product-page')
+            return res.redirect('/admin/products')
         }
 
 
     } catch (error) {
+        console.log(error);
         req.session.flash = {
             type: 'danger',
             message: 'Something went wrong please try again later'
@@ -195,8 +196,16 @@ router.post('/update-product/:id', [
         if (req.files) {
             imageName = req.files.image.name
             image = req.files.image
-            mkdirp('public/images/products')
-            image.mv('public/images/products/' + imageName, function (error) {
+
+            var dir = 'public/images/products/'
+
+            fs.unlink(dir + product._id + product.image, function (err) {
+                console.log(err);
+            })
+
+            mkdirp(dir)
+
+            image.mv(dir + product._id + imageName, function (error) {
                 console.log(error);
             })
         } else {
@@ -223,5 +232,36 @@ router.post('/update-product/:id', [
     }
 })
 
-
+/**
+ * 
+ * Delete Product
+ */
+router.get('/delete/:id', async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id)
+        if (!product) {
+            req.session.flash = {
+                type: 'danger',
+                message: "This product doesn't exist"
+            }
+            return redirect('/admin/products')
+        }
+        fs.unlink('public/images/products/' + product._id + product.image, function (error) {
+            console.log(error);
+        })
+        await product.delete()
+        req.session.flash = {
+            type: 'success',
+            message: 'Product deleted successfully'
+        }
+        return res.redirect('/admin/products')
+    } catch (error) {
+        console.log(error);
+        req.session.flash = {
+            type: 'danger',
+            message: 'Something went wrong please try again later'
+        }
+        res.redirect('/admin/products')
+    }
+})
 module.exports = router

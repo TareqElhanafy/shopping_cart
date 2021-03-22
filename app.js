@@ -9,8 +9,8 @@ require('./db.js');
 const pageRouter = require('./routers/admin/page')
 const categoryRouter = require('./routers/admin/category')
 const productRouter = require('./routers/admin/product')
-
-
+const dashboardRouter = require('./routers/admin/dashboard')
+const frontRouter = require('./routers/front/front')
 const app = express()
 
 //bodyParser midlleware
@@ -20,6 +20,7 @@ app.use(bodyParser.json())
 app.use(fileUpload())
 //loading the static files
 app.use(express.static(path.join(__dirname + '/public')))
+// creating session middleware
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -33,6 +34,7 @@ app.set('view engine', 'ejs')
 
 //errors var
 app.locals.errors = null
+app.locals.pages = null
 
 
 //flashing messages middleware
@@ -44,6 +46,15 @@ app.use(function (req, res, next) {
   next();
 });
 
+//setting the front navbar dynamically
+
+const Page = require('./models/page')
+Page.find({}).sort({ sorting: "asc" }).exec(function (error, pages) {
+  if (error) {
+    console.log(error);
+  }
+    app.locals.pages = pages
+})
 
 
 
@@ -51,26 +62,10 @@ app.use(function (req, res, next) {
 app.use('/admin/pages', pageRouter)
 app.use('/admin/categories', categoryRouter)
 app.use('/admin/products', productRouter)
-
-
+app.use('/admin', dashboardRouter)
+app.use('/', frontRouter)
 
 //port
-app.get('/', async (req, res) => {
-  res.render('index', {
-    'title': "In the Name of God"
-  });
-});
-
-
-
-
-
-
-
-
-
-
-
 app.listen(process.env.PORT, () => {
   console.log('server starts at ' + process.env.PORT)
 })

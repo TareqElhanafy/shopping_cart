@@ -48,7 +48,7 @@
                         <input type="file" class="form-control" name="image"  placeholder="image"
                             onchange="readURL(this);" value="<%= product.image %> ">
                         <br> <br>
-                        <img src="/images/products/<%= product.image %>" style="height: 80px; width: 80px;" id="product_image" alt="">
+                        <img src="/images/products/<%= product._id %><%= product.image %>" style="height: 80px; width: 80px;" id="product_image" alt="">
                     </div>
                     <button type="submit" class="btn btn-success">Save</button>
                 </form>
