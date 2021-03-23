@@ -1,0 +1,28 @@
+<%- include("layouts/header") -%>
+    <div class="col-xs-12 col-md-9">
+        <h1 class="text-center">
+            <%= title %>
+        </h1>
+        <br> <br>
+        <div class="row">
+            <div class="col-xs-12 col-md-8 text-center" style="margin-top: 20px; margin-bottom: 20px;">
+                <a href="">
+                    <img src="/images/products/<%= product.id %><%= product.image %>"
+                        style="height: 300px; width: 300px;" alt="">
+                </a>
+            </div>
+            <div class="col-xs-12 col-md-4">
+                <ul class="list-group">
+                    <label for=""><strong>Product Name</strong></label>
+                    <li class="list-group-item">
+                        <%= product.name %>
+                    </li>
+                    <label for=""><strong>Product Price</strong></label>
+                    <li class="list-group-item">
+                        $<%= product.price %>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <%- include("layouts/footer") -%>

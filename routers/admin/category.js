@@ -91,6 +91,7 @@ router.post('/store-category', [
             res.redirect('/admin/categories')
         }
     } catch (error) {
+        console.log(error);
         req.session.flash = {
             type: 'danger',
             message: 'something went wrong please try again later'
@@ -139,7 +140,7 @@ router.post('/update/:id', [
         var result = validationResult(req)
         if (!result.isEmpty()) {
             req.session.form = {
-                validations : result.errors
+                validations: result.errors
             }
             return res.redirect('/admin/categories/edit/' + req.params.id)
         }

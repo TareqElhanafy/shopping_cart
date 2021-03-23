@@ -36,7 +36,7 @@
                 </li>
                 <%}else{%>
                   <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="<%= page.slug %> ">
+                    <a class="nav-link active" aria-current="page" href="/pages/<%= page.slug %> ">
                       <%= page.title %>
                     </a>
                   </li>
@@ -44,28 +44,39 @@
 
                     <% }) %>
                       <% } %>
-
+                        <li class="nav-item">
+                          <a class="nav-link active" aria-current="page" href="/cart">
+                            MY Cart (
+                            <%if(typeof cart !=='undefined' ){%>
+                              <%= cart.length %>
+                                <%}else{%>
+                                  0
+                                  <% } %>
+                                   ) 
+                          </a>
+                        </li>
+        </ul>
       </div>
     </div>
   </nav>
-  <br> <br> <br> <br>
   <br> <br>
+  <%- include('./alerts/flash') %>
+    <br> <br>
+    <br> <br>
 
-  <main class="container">
-    <div class="row">
-      <div class="col-xs-12 col-md-3">
-        <h3>Categories</h3>
-        <ul class="list-group">
-          <%if(categories){%>
-            <% categories.forEach(function(category){%>
-              <li class="list-group-item">
-                <a href="/<%= category.slug %>/products/<%= category._id %>">
-                  <%= category.title %>
-                </a>
-              </li>
-              <% }) %>
-                <% } %>
-        </ul>
-      </div>
-
-      <%- include('./alerts/flash') %>
+    <main class="container">
+      <div class="row">
+        <div class="col-xs-12 col-md-3">
+          <h3>Categories</h3>
+          <ul class="list-group">
+            <%if(categories){%>
+              <% categories.forEach(function(category){%>
+                <li class="list-group-item">
+                  <a href="/<%= category.slug %>/products/<%= category._id %>">
+                    <%= category.title %>
+                  </a>
+                </li>
+                <% }) %>
+                  <% } %>
+          </ul>
+        </div>

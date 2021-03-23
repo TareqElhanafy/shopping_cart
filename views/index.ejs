@@ -7,15 +7,18 @@
       <% products.forEach(function(product){%>
         <div class="col-xs-12 col-md-4 text-center" style="margin-top: 20px; margin-bottom: 20px;">
           <a href="">
-             <img src="/images/products/<%= product.id %><%= product.image %>"
-              style="height: 150px; width: 150px;" alt="">
+            <img src="/images/products/<%= product.id %><%= product.image %>" style="height: 150px; width: 150px;"
+              alt="">
           </a>
           <h3>
             <%= product.name %>
           </h3>
           <h4>$<%= product.price %>
           </h4>
-          <a href="">View Details</a>
+          <a href="/product/<%= product._id %>/view/<%= product.slug %>">View Details</a>
+          <br>
+          <a href="/cart/<%= product._id %>/add/<%= product.slug %>" style="color: brown;">Add To cart</a>
+
         </div>
         <%}) %>
 

@@ -11,6 +11,7 @@ const categoryRouter = require('./routers/admin/category')
 const productRouter = require('./routers/admin/product')
 const dashboardRouter = require('./routers/admin/dashboard')
 const frontRouter = require('./routers/front/front')
+const cartRouter = require('./routers/front/cart')
 const app = express()
 
 //bodyParser midlleware
@@ -24,7 +25,8 @@ app.use(express.static(path.join(__dirname + '/public')))
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  cookie: { maxAge: 365 * 24 * 60 * 60 * 1000 }
 }));
 
 //views engine
@@ -41,6 +43,7 @@ app.locals.pages = null
 app.use(function (req, res, next) {
   res.locals.flash = req.session.flash
   res.locals.form = req.session.form
+  res.locals.cart = req.session.cart
   delete req.session.flash
   delete req.session.form
   next();
@@ -74,6 +77,8 @@ app.use('/admin/categories', categoryRouter)
 app.use('/admin/products', productRouter)
 app.use('/admin', dashboardRouter)
 app.use('/', frontRouter)
+app.use('/cart', cartRouter)
+
 
 //port
 app.listen(process.env.PORT, () => {
