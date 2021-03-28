@@ -1,0 +1,23 @@
+<%- include("layouts/header") -%>
+
+    <div class="col-xs-12 col-md-6">
+        <p class="text-center"><strong>Login</strong></p>
+        <form action="/users/login" method="POST">
+            <div class="form-group">
+                <label for="email">Username</label>
+                <input type="text" class="form-control" name="username" placeholder="Enter your Email"> 
+            </div>
+
+            <div class="form-group">
+                <label for="password">Passowrd</label>
+                <input type="password" class="form-control" name="password" placeholder="Enter your Passowrd"> 
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Login</button>
+            </div>
+        </form>
+    </div>
+
+  </main><!-- /.container -->
+  <%- include("layouts/footer") -%>

@@ -52,9 +52,27 @@
                                 <%}else{%>
                                   0
                                   <% } %>
-                                   ) 
+                                    )
                           </a>
                         </li>
+                        <% if(user){%>
+                          <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="">
+                              Logout
+                            </a>
+                          </li>
+                          <% }else{%>
+                            <li class="nav-item">
+                              <a class="nav-link active" aria-current="page" href="/users/register">
+                                Register
+                              </a>
+                            </li>
+                            <li class="nav-item">
+                              <a class="nav-link active" aria-current="page" href="/users/login">
+                                Login
+                              </a>
+                            </li>
+                            <%} %>
         </ul>
       </div>
     </div>

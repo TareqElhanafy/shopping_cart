@@ -3,6 +3,7 @@ const ejs = require('ejs')
 const path = require('path')
 const bodyParser = require('body-parser')
 var session = require('express-session');
+const passport = require('passport')
 const fileUpload = require('express-fileupload')
 require('dotenv').config()
 require('./db.js');
@@ -12,6 +13,8 @@ const productRouter = require('./routers/admin/product')
 const dashboardRouter = require('./routers/admin/dashboard')
 const frontRouter = require('./routers/front/front')
 const cartRouter = require('./routers/front/cart')
+const userRouter = require('./routers/front/user')
+
 const app = express()
 
 //bodyParser midlleware
@@ -28,6 +31,11 @@ app.use(session({
   saveUninitialized: false,
   cookie: { maxAge: 365 * 24 * 60 * 60 * 1000 }
 }));
+//passport middlewares
+app.use(passport.initialize());
+app.use(passport.session());
+//passport config
+require('./passport')(passport)
 
 //views engine
 app.set('views', path.join(__dirname, 'views'))
@@ -37,6 +45,7 @@ app.set('view engine', 'ejs')
 //errors var
 app.locals.errors = null
 app.locals.pages = null
+app.locals.user = null
 
 
 //flashing messages middleware
@@ -44,10 +53,12 @@ app.use(function (req, res, next) {
   res.locals.flash = req.session.flash
   res.locals.form = req.session.form
   res.locals.cart = req.session.cart
+  res.locals.user = req.user || null
   delete req.session.flash
   delete req.session.form
   next();
 });
+
 
 //setting the front navbar dynamically
 
@@ -78,6 +89,7 @@ app.use('/admin/products', productRouter)
 app.use('/admin', dashboardRouter)
 app.use('/', frontRouter)
 app.use('/cart', cartRouter)
+app.use('/users', userRouter)
 
 
 //port
