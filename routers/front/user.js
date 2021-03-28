@@ -66,7 +66,7 @@ router.post('/register', [
 })
 
 router.post('/login', [
-    check('username', 'email is required').notEmpty(),
+    check('email', 'email is required').notEmpty().isEmail().withMessage('email must be valid'),
     check('password', 'password is required').notEmpty().isString().withMessage('passowrd must be valid'),],
     async (req, res, next) => {
         try {
@@ -93,5 +93,9 @@ router.post('/login', [
 
     })
 
+router.get('/logout', async (req, res) => {
+    req.logout();
+    res.redirect('/');
+})
 
 module.exports = router
