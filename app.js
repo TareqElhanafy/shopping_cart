@@ -47,7 +47,6 @@ app.locals.errors = null
 app.locals.pages = null
 app.locals.user = null
 
-
 //flashing messages middleware
 app.use(function (req, res, next) {
   res.locals.flash = req.session.flash
@@ -91,7 +90,9 @@ app.use('/', frontRouter)
 app.use('/cart', cartRouter)
 app.use('/users', userRouter)
 
-
+app.post('/purchase', async (req, res) => {
+  res.send('ddd')
+})
 //port
 app.listen(process.env.PORT, () => {
   console.log('server starts at ' + process.env.PORT)

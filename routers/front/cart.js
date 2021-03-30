@@ -3,7 +3,6 @@ const Product = require('../../models/product')
 const router = new express.Router()
 
 router.get('/', async (req, res) => {
-    console.log(req.session.cart);
     res.render('cart', {
         title: 'cart',
     })

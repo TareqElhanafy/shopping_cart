@@ -26,6 +26,7 @@
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
     "slugify": "^1.4.7",
+    "stripe": "^8.140.0",
     "sweetalert2": "^10.15.5"
   }
 }

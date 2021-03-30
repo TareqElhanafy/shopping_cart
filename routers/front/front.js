@@ -1,7 +1,7 @@
 const express = require('express');
 const Page = require('../../models/page');
 const Product = require('../../models/product')
-const mongoose = require('mongoose')
+const stripe = require('stripe')(process.env.STRIPE_SECRET);
 const router = new express.Router()
 /**
  * 
@@ -95,5 +95,40 @@ router.get('/product/:id/view/:slug', async (req, res) => {
     }
 
 })
+
+router.get('/payment/stripe', async (req, res) => {
+    res.render('stripe', {
+        title: 'Payment'
+    })
+})
+router.post('/create-checkout-session', async (req, res) => {
+    var cart = req.session.cart
+    var line_items = []
+    cart.forEach(product => {
+        line_items.push({
+            price_data: {
+                currency: 'usd',
+                product_data: {
+                    name: product.title,
+                    images: ['https://localhost:3111/public/images/products' + product.id + product.image],
+                },
+                unit_amount: product.price * 100,
+            },
+            quantity: product.qty,
+        })
+    });
+    const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: line_items,
+        mode: 'payment',
+        success_url: `http://localhost:3111/`,
+        cancel_url: `http://localhost:3111/cart`,
+    });
+    delete req.session.cart
+    res.json({ id: session.id });
+
+
+})
+
 
 module.exports = router
