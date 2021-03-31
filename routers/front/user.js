@@ -2,6 +2,7 @@ const express = require('express')
 const { check, validationResult } = require('express-validator')
 const passport = require('passport')
 const bcrypt = require('bcrypt')
+const sgMail = require('@sendgrid/mail')
 const User = require('../../models/user')
 const router = new express.Router()
 
@@ -54,8 +55,19 @@ router.post('/register', [
             type: 'success',
             message: 'Successfully Registered'
         }
+        //sending trial welcome email to user
+        sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+        const msg = {
+            to: user.email,
+            from: process.env.EMAIL,
+            subject: 'Welcome to Purchase',
+            text: `Welcome ${user.name} to our website, wish you enjoy our products`,
+        }
+        await sgMail.send(msg);
         res.redirect('/')
     } catch (error) {
+
+        console.log(error);
         req.session.flash = {
             type: 'danger',
             message: 'something went wrong please try again later'
