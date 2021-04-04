@@ -14,7 +14,7 @@ const dashboardRouter = require('./routers/admin/dashboard')
 const frontRouter = require('./routers/front/front')
 const cartRouter = require('./routers/front/cart')
 const userRouter = require('./routers/front/user')
-
+const {auth, isAdminAuth} = require('./middleware/auth')
 const app = express()
 
 //bodyParser midlleware
@@ -82,12 +82,12 @@ Category.find({}).exec(function (error, categories) {
 
 
 //Routers
-app.use('/admin/pages', pageRouter)
-app.use('/admin/categories', categoryRouter)
-app.use('/admin/products', productRouter)
-app.use('/admin', dashboardRouter)
+app.use('/admin/pages', isAdminAuth, pageRouter)
+app.use('/admin/categories', isAdminAuth, categoryRouter)
+app.use('/admin/products', isAdminAuth, productRouter)
+app.use('/admin', isAdminAuth, dashboardRouter)
 app.use('/', frontRouter)
-app.use('/cart', cartRouter)
+app.use('/cart', auth, cartRouter)
 app.use('/users', userRouter)
 
 app.post('/purchase', async (req, res) => {

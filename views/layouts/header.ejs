@@ -74,6 +74,13 @@
                               </a>
                             </li>
                             <%} %>
+                            <% if(user.admin === 1){%>
+                              <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="/admin">
+                                  Dashboard
+                                </a>
+                              </li>
+                            <%} %> 
         </ul>
       </div>
     </div>
